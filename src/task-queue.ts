@@ -1,6 +1,6 @@
 class TaskQueue<T> {
   #queue: Map<number, T>;
-  #head: number = 0;
+  #head: number = 1;
   #tail: number = 0;
   #maxSize: number;
 
@@ -30,7 +30,7 @@ class TaskQueue<T> {
   pop(): T {
     let poppedItem: T | null = null;
     while (!poppedItem) {
-      if (this.#head === this.#tail) throw Error("End of Queue.");
+      if (this.#head > this.#tail) throw Error("End of Queue.");
       const hasItem = this.#queue.get(this.#head);
       if (hasItem) {
         poppedItem = hasItem;
