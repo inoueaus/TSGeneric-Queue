@@ -1,24 +1,24 @@
 class TaskQueue<T> {
   #queue: Map<number, T>;
-  #head: number = 1;
-  #tail: number = 0;
+  #front: number = 1;
+  #back: number = 0;
   #maxSize: number;
 
   constructor(initialValues: T[] = [], params: { capacity?: number } = {}) {
     this.#queue = new Map();
     this.#maxSize = params.capacity ?? Infinity;
-    initialValues.forEach(value => this.add(value));
+    initialValues.forEach((value) => this.enqueue(value));
   }
 
   get size(): number {
     return this.#queue.size;
   }
 
-  add(value: T): number {
-    if (this.size > this.#maxSize) throw Error("Queue is full.")
-    this.#tail++;
-    this.#queue.set(this.#tail, value);
-    return this.#tail;
+  enqueue(value: T): number {
+    if (this.size > this.#maxSize) throw Error("Queue is full.");
+    this.#back++;
+    this.#queue.set(this.#back, value);
+    return this.#back;
   }
 
   remove(key: number): void {
@@ -27,24 +27,34 @@ class TaskQueue<T> {
     this.#queue.delete(key);
   }
 
-  pop(): T {
+  dequeue(): T {
     let poppedItem: T | null = null;
     while (!poppedItem) {
-      if (this.#head > this.#tail) throw Error("End of Queue.");
-      const hasItem = this.#queue.get(this.#head);
+      if (this.#front > this.#back) throw Error("End of Queue.");
+      const hasItem = this.#queue.get(this.#front);
       if (hasItem) {
         poppedItem = hasItem;
         break;
       }
-      this.#head++;
+      this.#front++;
     }
-    this.#queue.delete(this.#head);
-    this.#head++;
+    this.#queue.delete(this.#front);
+    this.#front++;
     return poppedItem;
   }
 
   peek(): T | undefined {
-    return this.#queue.get(this.#head);
+    let peekedItem: T | undefined = undefined;
+    while (!peekedItem) {
+      if (this.#front > this.#back) break;
+      const hasItem = this.#queue.get(this.#front);
+      if (hasItem) {
+        peekedItem = hasItem;
+        break;
+      }
+      this.#front++;
+    }
+    return peekedItem;
   }
 }
 
